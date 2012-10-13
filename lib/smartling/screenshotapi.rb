@@ -12,6 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'smartling/version'
-require 'smartling/fileapi'
-require 'smartling/screenshotapi'
+require 'smartling/api'
+
+module Smartling
+  module Services
+    SCREENSHOT_UPLOAD = 'service/context/screenshot/upload'
+  end
+
+  class Screenshot < Api
+    def upload(strings, screenshot, name, type, params = nil)
+      keys = { :'resStrings[0]' => strings, :uri => name, :fileType => type }
+      uri = uri(Services::SCREENSHOT_UPLOAD, keys, {:apiVersion => 0}).require(:'resStrings[0]', :uri, :fileType)
+      file = ::File.open(screenshot, 'rb') if screenshot.is_a?(String)
+      return post(uri.to_s, :screenshot => file)
+    end
+  end
+end
