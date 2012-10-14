@@ -21,8 +21,12 @@ module Smartling
 
   class Screenshot < Api
     def upload(strings, screenshot, name, type, params = nil)
-      keys = { :'resStrings[0]' => strings, :uri => name, :fileType => type }
-      uri = uri(Services::SCREENSHOT_UPLOAD, keys, {:apiVersion => 0}).require(:'resStrings[0]', :uri, :fileType)
+      string_hash = {}
+      strings.each_with_index do |string, i|
+        string_hash["resStrings[#{i}]"] = string
+      end
+      keys = { :uri => name, :fileType => type }.merge(string_hash)
+      uri = uri(Services::SCREENSHOT_UPLOAD, keys, {:apiVersion => 0}).require(:uri, :fileType)
       file = ::File.open(screenshot, 'rb') if screenshot.is_a?(String)
       return post(uri.to_s, :screenshot => file)
     end

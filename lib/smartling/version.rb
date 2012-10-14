@@ -14,6 +14,6 @@
 
 module Smartling
   # This follows Semantic Versioning http://semver.org/
-  VERSION = '0.6'
+  VERSION = '0.6.1'
 end
 
